@@ -30,3 +30,13 @@ class SearchResponse(BaseModel):
     query: str
     found: int
     vacancies: list[Vacancy]
+
+
+class EvaluatedVacancy(BaseModel):
+    """Вакансия с оценкой от AI."""
+
+    vacancy: Vacancy
+    score: int  # 0..100
+    match_reasons: list[str]
+    gaps: list[str]
+    verdict: str
