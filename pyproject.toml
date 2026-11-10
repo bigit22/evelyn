@@ -36,7 +36,8 @@ select = ["E", "F", "I", "N", "W", "UP", "B", "SIM"]
 # Настройки mypy (проверка типов)
 [tool.mypy]
 python_version = "3.11"
-strict = true                # строгий режим (требует аннотации типов)
+strict = true
+explicit_package_bases = true
 
 [tool.setuptools.packages.find]
 include = ["app*"]
