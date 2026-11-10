@@ -1,0 +1,25 @@
+repos:
+  # Базовые проверки (пробелы в конце строк, пустые строки и т.д.)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace      # убирает пробелы в конце строк
+      - id: end-of-file-fixer        # добавляет пустую строку в конце файла
+      - id: check-yaml               # проверяет, что YAML-файлы валидны
+      - id: check-added-large-files  # не даст закоммитить файл > 500KB
+        args: [ "--maxkb=500" ]
+
+  # Ruff: линтер + форматтер (заменяет flake8 + black + isort)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.0
+    hooks:
+      - id: ruff          # находит ошибки и --fix автоматически чинит
+        args: [ --fix ]
+      - id: ruff-format   # форматирует код (как black, но быстрее)
+
+  # Mypy: проверка типов
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [ pydantic, pydantic-settings, fastapi ]
