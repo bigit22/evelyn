@@ -1,13 +1,14 @@
 from fastapi import FastAPI
 
-from app.routers import cover, resume, vacancies
+from app.routers import cover, resume, vacancies, web
 
 app = FastAPI(
     title="Evelyn API",
-    description="AI-powered job search assistant API",
+    description="AI-powered job search assistant",
     version="0.1.0",
 )
 
+app.include_router(web.router)
 app.include_router(vacancies.router)
 app.include_router(resume.router)
 app.include_router(cover.router)
