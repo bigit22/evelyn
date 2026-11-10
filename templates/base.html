@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Evelyn — AI Job Assistant{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9' }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="h-full flex flex-col font-sans antialiased">
+    <!-- Navbar -->
+    <nav class="border-b border-slate-800 bg-slate-950/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center font-bold text-lg text-white shadow-lg shadow-brand-500/20">
+                    E
+                </div>
+                <span class="font-bold text-xl tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                    Evelyn <span class="text-xs font-normal text-brand-500 border border-brand-500/30 px-2 py-0.5 rounded-full">AI</span>
+                </span>
+            </div>
+
+            <!-- Settings / BYOK Modal Trigger -->
+            <button onclick="toggleSettingsModal()" class="flex items-center gap-2 text-sm bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 transition">
+                <i class="fa-solid fa-key text-brand-500"></i>
+                <span id="key-status-text">Настроить API-ключ</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- BYOK Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-brand-500"></i> Настройки AI (BYOK)
+                </h3>
+                <button onclick="toggleSettingsModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">AI Провайдер</label>
+                    <select id="modal-provider" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
+                        <option value="openrouter">OpenRouter (бесплатные модели)</option>
+                        <option value="gemini">Google Gemini</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">API Ключ</label>
+                    <input type="password" id="modal-api-key" placeholder="sk-or-v1-..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
+                    <p class="text-xs text-slate-400 mt-1">Ключ хранится локально в вашем браузере.</p>
+                </div>
+                <button onclick="saveSettings()" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-medium py-2 rounded-lg transition shadow-lg shadow-brand-600/30">
+                    Сохранить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSettingsModal() {
+            document.getElementById('settings-modal').classList.toggle('hidden');
+        }
+
+        function saveSettings() {
+            const provider = document.getElementById('modal-provider').value;
+            const key = document.getElementById('modal-api-key').value.trim();
+            localStorage.setItem('evelyn_provider', provider);
+            localStorage.setItem('evelyn_api_key', key);
+            updateKeyStatus();
+            toggleSettingsModal();
+        }
+
+        function updateKeyStatus() {
+            const key = localStorage.getItem('evelyn_api_key');
+            const statusEl = document.getElementById('key-status-text');
+            if (key) {
+                statusEl.innerText = 'Ключ подключен ✓';
+                statusEl.classList.add('text-emerald-400');
+            } else {
+                statusEl.innerText = 'Укажите API-ключ';
+                statusEl.classList.remove('text-emerald-400');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const provider = localStorage.getItem('evelyn_provider') || 'openrouter';
+            const key = localStorage.getItem('evelyn_api_key') || '';
+            document.getElementById('modal-provider').value = provider;
+            document.getElementById('modal-api-key').value = key;
+            updateKeyStatus();
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
